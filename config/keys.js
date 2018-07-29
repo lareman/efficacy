@@ -3,15 +3,15 @@
     to other files 
 */
 module.exports = {
-  mongoURI: "mongodb://efficacyadmin:aim99aim@localhost:27017/efficacy"
+  mongoURI: "mongodb://admin:123123@localhost:27017/efficacy"
 };
 
 /*
 use efficacy   
 db.createUser(
    {
-     user: "efficacyadmin",
-     pwd: "aim99aim",
+     user: "admin",
+     pwd: "123123",
      roles: [ "readWrite", "dbAdmin" ]
    }
 )
@@ -27,4 +27,9 @@ db.createUser(
              { role: "readWriteAnyDatabase", db: "admin" } ]
   }
 )
+*/
+
+/* GIT
+git remote add origin https://github.com/lareman/efficacy.git
+git push -u origin master
 */

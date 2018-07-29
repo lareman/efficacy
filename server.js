@@ -7,7 +7,7 @@ const app = express();
 /* Define Express port to use */
 const port = process.env.PORT || 5000;
 /* Bring in routes to use */
-const users = require("./routes/api/users");
+const users = require("./routes/api/users/for_users/users");
 const posts = require("./routes/api/posts");
 
 /* Connect to MondoDB */
