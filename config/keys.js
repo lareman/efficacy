@@ -3,7 +3,7 @@
     to other files 
 */
 module.exports = {
-  mongoURI: "mongodb://admin:123123@localhost:27017/efficacy"
+    mongoURI: "mongodb://admin:123123@localhost:27017/efficacy"
 };
 
 /*
@@ -30,6 +30,6 @@ db.createUser(
 */
 
 /* GIT
-git remote add origin https://github.com/lareman/efficacy.git
-git push -u origin master
+  git remote add origin https://github.com/lareman/efficacy.git
+  git push -u origin master
 */
