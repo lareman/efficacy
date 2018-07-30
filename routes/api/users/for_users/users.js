@@ -6,9 +6,15 @@ const gravatar = require("gravatar");
 const User = require("../../../../models/User");
 /* Load bcryptJS for password encryption */
 const bcrypt = require("bcryptjs");
+/* JSON Web Token */
+const jwt = require("jsonwebtoken");
+/* For refresh token */
+const randtoken = require("rand-token");
+/* Keys n Stuff */
+const keys = require("../../../../config/keys");
 
 /**
- *  B E G I N    R O U T E S
+ *  B E G I N    R O U T E S    D E F S
  ****************************************************/
 
 /**
@@ -91,10 +97,38 @@ router.post("/login", (req, res) => {
                 .status(404)
                 .json({ email: "User name/password not found." });
         }
-        // Check password with bcrypt compare
+        // Check password
         bcrypt.compare(password, user.password).then(isMatch => {
             if (isMatch) {
-                res.json({ msg: "This is where we return our JWT" });
+                // User matched, create JWT payload
+                const payload = {
+                    id: user.id,
+                    first_name: user.first_name,
+                    last_name: user.last_name,
+                    avatar: user.avatar
+                };
+
+                /**
+                 * Refresh Token
+                 * This is just a placeholder.  A refresh token is not necessary for front-end
+                 * interface?  Will use for the raw API usage part of the app, tho.
+                 */
+                var refresh_token = randtoken.uid(256);
+
+                // Sign JWT Token
+                jwt.sign(
+                    payload,
+                    keys.jwtTokenUserSecret,
+                    { expiresIn: keys.jwtTokenUserLifeTime },
+                    (err, token) => {
+                        res.json({
+                            success: true,
+                            id: user.id,
+                            token: "Bearer " + token,
+                            refresh_token
+                        });
+                    }
+                );
             } else {
                 return res
                     .status(400)
@@ -105,7 +139,7 @@ router.post("/login", (req, res) => {
 });
 
 /**
- *  E N d    R O U T E S
+ *  E N d    R O U T E S    D E F S
  ****************************************************/
 
 module.exports = router;
