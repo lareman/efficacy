@@ -8,6 +8,10 @@ const User = require("../../../../models/User");
 const bcrypt = require("bcryptjs");
 
 /**
+ *  B E G I N    R O U T E S
+ ****************************************************/
+
+/**
  * @route:  GET api/users/test
  * @desc:   Test users route
  * @access: Public
@@ -65,5 +69,43 @@ router.post("/register", (req, res) => {
         }
     });
 });
+/**
+ * @route:  POST api/users/login
+ * @desc:   Login user and return JWT token
+ * @access: Public
+ **/
+router.post("/login", (req, res) => {
+    const email = req.body.email;
+    const password = req.body.password;
+    /**
+     * Check for user
+     * ES6 Note
+     *  User.findOne({ email : email})
+     *      can be substituted with
+     *  User.findOne({ email })
+     *      because names are the same
+     **/
+    User.findOne({ email }).then(user => {
+        if (!user) {
+            return res
+                .status(404)
+                .json({ email: "User name/password not found." });
+        }
+        // Check password with bcrypt compare
+        bcrypt.compare(password, user.password).then(isMatch => {
+            if (isMatch) {
+                res.json({ msg: "This is where we return our JWT" });
+            } else {
+                return res
+                    .status(400)
+                    .json({ password: "User name/password not found." });
+            }
+        });
+    });
+});
+
+/**
+ *  E N d    R O U T E S
+ ****************************************************/
 
 module.exports = router;
