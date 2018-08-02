@@ -1,20 +1,21 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
 /* GravatAAAR */
-const gravatar = require("gravatar");
+const gravatar = require('gravatar');
 /* Load user model */
-const User = require("../../../../models/User");
+const User = require('../../../../models/User');
 /* Load bcryptJS for password encryption */
-const bcrypt = require("bcryptjs");
+const bcrypt = require('bcryptjs');
 /* JSON Web Token */
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken');
 /* For refresh token */
-const randtoken = require("rand-token");
+const randtoken = require('rand-token');
 /* Keys n Stuff */
-const keys = require("../../../../config/keys");
+const keys = require('../../../../config/keys');
+const passport = require('passport');
 
 /**
- *  B E G I N    R O U T E S    D E F S
+ *  B E G I N    R O U T E     D E F S
  ****************************************************/
 
 /**
@@ -22,23 +23,23 @@ const keys = require("../../../../config/keys");
  * @desc:   Test users route
  * @access: Public
  **/
-router.get("/test", (req, res) => res.json({ msg: "Users Works!" }));
+router.get('/test', (req, res) => res.json({ msg: 'Users Works!' }));
 /**
  * @route:  POST api/users/register
  * @desc:   Register user
  * @access: Public
  **/
-router.post("/register", (req, res) => {
+router.post('/register', (req, res) => {
     User.findOne({ email: req.body.email }).then(user => {
         if (user) {
             return res.status(400).json({
-                email: "Email already exists.  Please use unique email address."
+                email: 'Email already exists.  Please use unique email address.'
             });
         } else {
             const avatar = gravatar.url(req.body.email, {
-                s: "200", // Size
-                r: "pg", // Rating
-                d: "mm" // Default - Blank Avatar
+                s: '200', // Size
+                r: 'pg', // Rating
+                d: 'mm' // Default - Blank Avatar
             });
             /**
              *  When creating a new resource with Mongoose, use the 'new'
@@ -80,7 +81,7 @@ router.post("/register", (req, res) => {
  * @desc:   Login user and return JWT token
  * @access: Public
  **/
-router.post("/login", (req, res) => {
+router.post('/login', (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
     /**
@@ -95,7 +96,7 @@ router.post("/login", (req, res) => {
         if (!user) {
             return res
                 .status(404)
-                .json({ email: "User name/password not found." });
+                .json({ email: 'User name/password not found.' });
         }
         // Check password
         bcrypt.compare(password, user.password).then(isMatch => {
@@ -124,7 +125,7 @@ router.post("/login", (req, res) => {
                         res.json({
                             success: true,
                             id: user.id,
-                            token: "Bearer " + token,
+                            token: 'Bearer ' + token,
                             refresh_token
                         });
                     }
@@ -132,14 +133,26 @@ router.post("/login", (req, res) => {
             } else {
                 return res
                     .status(400)
-                    .json({ password: "User name/password not found." });
+                    .json({ password: 'User name/password not found.' });
             }
         });
     });
 });
+/**
+ * @route:  GET api/users/current
+ * @desc:   Returns current user
+ * @access: Private
+ **/
+router.get(
+    '/current',
+    passport.authenticate('jwt', { session: false }),
+    (req, res) => {
+        res.json(req.user);
+    }
+);
 
 /**
- *  E N d    R O U T E S    D E F S
+ *  E N d    R O U T E     D E F S
  ****************************************************/
 
 module.exports = router;

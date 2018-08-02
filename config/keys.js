@@ -4,8 +4,8 @@ module.exports = {
     jwtTokenUserLifeTime: 3600,
     jwtRefreshTokenUserSecret: "TenGallonHatIsFiveGallonsFlat",
     jwtRefreshTokenUserLifeTime: 86400,
-    jwtTokenAPIUserSecret: "HankerForAHunkOfCheese",
+    jwtTokenAPIUserSecret: "IAmABillYesIMOnlyABill",
     jwtTokenAPIUserLifetime: 3600,
-    jwtRefreshTokenAPIUserSecret: "TenGallonHatIsFiveGallonsFlat",
+    jwtRefreshTokenAPIUserSecret: "SittingHereOnCapitolHill",
     jwtRefreshTokenAPIUserLifeTime: 86400
 };
