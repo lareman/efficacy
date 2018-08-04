@@ -9,6 +9,12 @@ opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 /** Note:  'secretOrKey' name required by strategy.js module */
 opts.secretOrKey = keys.jwtTokenUserSecret;
 
+/**
+ * 
+ * @param {*} passport
+ * Same as:
+ * function(passport){ ... 
+ */
 module.exports = passport => {
     passport.use(
         new JwtStrategy(opts, (jwt_payload, done) => {

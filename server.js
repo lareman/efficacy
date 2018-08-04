@@ -17,7 +17,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 /* Bring in routes to use */
 
-const users = require('./routes/api/users/for_users/users');
+const users = require('./routes/api/users/users');
 const posts = require('./routes/api/posts');
 /* BodyParser for posts */
 const bodyParser = require('body-parser');
@@ -33,9 +33,9 @@ mongoose
 
 /* 
 
-/**
+/****************************************************
  *  M I D D L E W A R E    S E C T I O N    B E G I N
- ****************************************************/
+ */
 
 /* Body Parser */
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -47,7 +47,8 @@ app.use(bodyParser.json());
  * */
 app.use(passport.initialize());
 require('./config/passport')(passport);
-/**
+
+/*
  *  M I D D L E W A R E    S E C T I O N    E N D
  ****************************************************/
 
