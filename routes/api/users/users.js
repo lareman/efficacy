@@ -14,6 +14,10 @@ const randtoken = require('rand-token');
 const keys = require('../../../config/keys');
 const passport = require('passport');
 
+// Load Input Validation
+const validateRegisterInput = require('../../../validation/register');
+const validateLoginInput = require('../../../validation/login');
+
 /**
  *  B E G I N    R O U T E     D E F S
  ****************************************************/
@@ -30,11 +34,17 @@ router.get('/test', (req, res) => res.json({ msg: 'Users Works!' }));
  * @access: Public
  **/
 router.post('/register', (req, res) => {
+    const { errors, isValid } = validateRegisterInput(req.body);
+    // Check Validation
+    if (!isValid) {
+        return res.status(400).json(errors);
+    }
+
     User.findOne({ email: req.body.email }).then(user => {
         if (user) {
-            return res.status(400).json({
-                email: 'Email already exists.  Please use unique email address.'
-            });
+            errors.email =
+                'Email already exists.  Please use a unique email address.';
+            return res.status(400).json(errors);
         } else {
             const avatar = gravatar.url(req.body.email, {
                 s: '200', // Size
@@ -82,6 +92,13 @@ router.post('/register', (req, res) => {
  * @access: Public
  **/
 router.post('/login', (req, res) => {
+    const { errors, isValid } = validateLoginInput(req.body);
+
+    // Validation
+    if (!isValid) {
+        return res.status(400).json(errors);
+    }
+
     const email = req.body.email;
     const password = req.body.password;
     /**
@@ -92,11 +109,15 @@ router.post('/login', (req, res) => {
      *  User.findOne({ email })
      *      because names are the same
      **/
+
+    /**
+     *  TODO:  Need to store access and refresh token in MongodDB
+     *         as an additional security measure
+     **/
     User.findOne({ email }).then(user => {
         if (!user) {
-            return res
-                .status(404)
-                .json({ email: 'User name/password not found.' });
+            errors.email = 'User NAME/password combination not found.';
+            return res.status(404).json(errors);
         }
         // Check password
         bcrypt.compare(password, user.password).then(isMatch => {
@@ -114,7 +135,7 @@ router.post('/login', (req, res) => {
                  * This is just a placeholder.  A refresh token is not necessary for front-end
                  * interface?  Will use for the raw API usage part of the app, tho.
                  */
-                var refresh_token = randtoken.uid(256);
+                var refresh_token = randtoken.uid(512);
 
                 // Sign JWT Token
                 jwt.sign(
@@ -131,9 +152,12 @@ router.post('/login', (req, res) => {
                     }
                 );
             } else {
-                return res
-                    .status(400)
-                    .json({ password: 'User name/password not found.' });
+                /**
+                 *  Placeholder for now:  Should not reveal specifically
+                 *  what doesn't match
+                 **/
+                errors.password = 'User name/PASSWORD combination not found.';
+                return res.status(404).json(errors);
             }
         });
     });
